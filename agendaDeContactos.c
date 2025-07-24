@@ -18,7 +18,7 @@ contacto pedirDatos();
 void limpiarBuffer();
 
 int main(){
-	system("color 0B");
+	printf("\033[%dm", 50);
 	int opcion=1;
 	FILE *archivo;
 	contacto persona;
@@ -67,7 +67,7 @@ int main(){
 					}
 				break;
 				case 4:
-				
+					listar(archivo);
 				break;	
 				case 0:
 					printf("programa finalizado...");
@@ -135,11 +135,14 @@ int main(){
 		limpiarBuffer();
 		fgets(c.nombre, sizeof(c.nombre), stdin);
 		printf("Ingresar telefono: ");
-		
 		fgets(c.numeroTelefono, sizeof(c.numeroTelefono), stdin);
 		printf("Ingresar correo electronico: ");
-		
 		fgets(c.email, sizeof(c.email), stdin);
+		
+		printf("%s", c.nombre);
+		printf("%s", c.numeroTelefono);
+		printf("%s", c.email);
+		getchar();
 		return c;
 	}
 /******************************************************************************/
