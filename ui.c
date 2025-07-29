@@ -14,8 +14,9 @@ int menu(void) {
 		puts("\t [5] BUSCAR");
 		puts("\t [0] SALIR");
 		scanf("%d", &opcion);
+		limpiarBuffer();
 	} while (opcion < 0 || opcion > 5);
-	limpiarBuffer();
+	
 	return opcion;
 }
 

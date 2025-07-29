@@ -24,28 +24,29 @@ int main(void) {
 			persona = pedirNombre();
 			if (buscarContacto(archivo, &persona)) {
 				eliminarContacto(&persona);
-				puts("Contacto eliminado.");
 			} else
 							   printf("No existe: %s", persona.nombre);
 			break;
 		case 3:
 			persona = pedirNombre();
 			if (buscarContacto(archivo, &persona)) {
-				persona = pedirDatos();
+				//persona = pedirDatos();
 				editarContacto(archivo, &persona);
 				puts("Contacto modificado.");
 			} else
 							   printf("No existe: %s", persona.nombre);
 			break;
 		case 4:
+			fclose(archivo);
+			archivo = fopen("info.dat", "ab+");
 			listarContactos(archivo);
 			break;
 		case 5:
 			persona = pedirNombre();
 			if (buscarContacto(archivo, &persona))
-				puts("¡Contacto encontrado!");
+				puts("\t-----");
 			else
-				puts("No lo hallé.");
+				puts("Contacto no encontrado.");
 			break;
 		}
 		puts("Pulse ENTER para continuar...");

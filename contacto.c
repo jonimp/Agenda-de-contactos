@@ -1,18 +1,21 @@
 #include <stdio.h>
+#include <string.h>
 #include "contacto.h"
 #include "ui.h"      // si usas limpiarBuffer() de ui.c
 
 contacto pedirDatos(void) {
 	contacto c;
 	printf("Ingresar nombre: ");
-	limpiarBuffer();                     // o getchar() seg√∫n tu ui
 	fgets(c.nombre, NOMBRE_MAX, stdin);
+	c.nombre[strcspn(c.nombre, "\n")] = '\0';
 	
-	printf("Ingresar tel√©fono: ");
+	printf("Ingresar telÈfono: ");
 	fgets(c.numeroTelefono, TELEFONO_MAX, stdin);
+	c.numeroTelefono[strcspn(c.numeroTelefono, "\n")] = '\0';
 	
-	printf("Ingresar correo electr√≥nico: ");
+	printf("Ingresar correo electrÛnico: ");
 	fgets(c.eMail, EMAIL_MAX, stdin);
+	c.eMail[strcspn(c.eMail, "\n")] = '\0';
 	
 	return c;
 }
@@ -20,7 +23,8 @@ contacto pedirDatos(void) {
 contacto pedirNombre(void) {
 	contacto c;
 	printf("Ingresar nombre: ");
-	limpiarBuffer();
 	fgets(c.nombre, NOMBRE_MAX, stdin);
+	c.nombre[strcspn(c.nombre, "\n")] = '\0';
+	
 	return c;
 }
