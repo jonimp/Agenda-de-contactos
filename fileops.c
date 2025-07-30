@@ -55,7 +55,6 @@ void editarContacto(FILE *arch, const contacto *pers) {
 	rewind(arch);
 	while (fread(&aux, sizeof(contacto), 1, arch) == 1) {
 		if (strcmp(aux.nombre, pers->nombre) == 0){
-			mostrarContacto(aux);
 			printf("Ingresar nuevamente los datos...\n");
 			aux = pedirDatos();
 			fseek(arch, -sizeof(contacto), SEEK_CUR);

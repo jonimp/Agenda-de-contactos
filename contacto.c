@@ -9,11 +9,11 @@ contacto pedirDatos(void) {
 	fgets(c.nombre, NOMBRE_MAX, stdin);
 	c.nombre[strcspn(c.nombre, "\n")] = '\0';
 	
-	printf("Ingresar teléfono: ");
+	printf("Ingresar telefono: ");
 	fgets(c.numeroTelefono, TELEFONO_MAX, stdin);
 	c.numeroTelefono[strcspn(c.numeroTelefono, "\n")] = '\0';
 	
-	printf("Ingresar correo electrónico: ");
+	printf("Ingresar correo electronico: ");
 	fgets(c.eMail, EMAIL_MAX, stdin);
 	c.eMail[strcspn(c.eMail, "\n")] = '\0';
 	
