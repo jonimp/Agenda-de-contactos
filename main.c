@@ -2,8 +2,10 @@
 #include "contacto.h"
 #include "fileops.h"
 #include "ui.h"
+#include "gtkiu.h"
 
-int main(void) {
+int main(int argc, char *argv[]) {
+	iniciarGTK(argc, argv);
 	int opcion;
 	contacto persona;
 	FILE *archivo = fopen("info.dat", "ab+");
@@ -62,5 +64,6 @@ int main(void) {
 	}
 	
 	puts("Programa terminado.");
+	
 	return 0;
 }

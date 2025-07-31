@@ -1,17 +1,19 @@
 CC = gcc
-CFLAGS = -Wall -g `pkg-config --cflags gtk+-3.0`
+CFLAGS = `pkg-config --cflags gtk+-3.0` -Wall -g
 LDFLAGS = `pkg-config --libs gtk+-3.0`
-SRCS = main.c ui.c fileops.c contacto.c
-OBJS = $(SRCS:.c=.o)
-TARGET = agenda
+
+SRC = main.c contacto.c fileops.c gtkui.c
+OBJ = $(SRC:.c=.o)
+
+TARGET = agenda_gui
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+$(TARGET): $(OBJ)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
