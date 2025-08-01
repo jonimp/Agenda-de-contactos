@@ -8,11 +8,10 @@ static void on_agregar_contacto_clicked(GtkWidget *widget, gpointer data);
 /*---------------------| ARRANQUE DEL ENTORNO GRAFICO |-----------------------*/
 void iniciarGTK(int argc, char *argv[]) {
 	GtkApplication *app;
-	int status;
 	
 	app = gtk_application_new("com.ejemplo.agenda", G_APPLICATION_FLAGS_NONE);
 	g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
-	status = g_application_run(G_APPLICATION(app), argc, argv);
+	g_application_run(G_APPLICATION(app), argc, argv);
 	g_object_unref(app);
 }
 /*----------------------------------------------------------------------------*/
@@ -103,7 +102,7 @@ static void on_agregar_contacto_clicked(GtkWidget *widget, gpointer data) {
 		strncpy(nuevo.eMail, email, sizeof(nuevo.eMail));
 		
 		// Guardar el contacto
-		agregarContacto(nuevo);
+		agregarContacto(&nuevo);
 		
 		// Mensaje de éxito
 		GtkWidget *msg = gtk_message_dialog_new(parent_window,

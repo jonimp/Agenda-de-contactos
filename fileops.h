@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include "contacto.h"
 
-int buscarContacto(FILE *arch, const contacto *pers);
-void agregarContacto(FILE *arch, const contacto *pers);
+int buscarContacto(const contacto *pers);
+void agregarContacto(const contacto *pers);
 void eliminarContacto(const contacto *pers);
-void editarContacto(FILE *arch, const contacto *pers);
-void listarContactos(FILE *arch);
+void editarContacto(const contacto *pers);
+void listarContactos();
 void mostrarContacto(contacto);
 
 #endif // FILEOPS_H
