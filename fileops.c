@@ -72,15 +72,12 @@ void editarContacto(const contacto *pers) {
 }
 
 void listarContactos(FILE *arch) {
-	archivo = fopen(FILENAME, "rb");
-	contacto aux;
-	rewind(archivo);
-	while (fread(&aux, sizeof(contacto), 1, archivo) == 1) {
-		printf("Nombre: %s \nTel: %s \nEmail: %s\n",
-			   aux.nombre, aux.numeroTelefono, aux.eMail);
-		printf("\t -----\n");
+	contacto lista[100];
+	int cantidad = obtenerContactos(lista, 100);
+	
+	for (int i = 0; i < cantidad; i++) {
+		printf("Nombre: %s\n", lista[i].nombre);
 	}
-	fclose(archivo);
 }
 
 void mostrarContacto(contacto persona) {
@@ -88,6 +85,51 @@ void mostrarContacto(contacto persona) {
 	printf("Telefono: %s\n", persona.numeroTelefono);
 	printf("E-mail: %s\n", persona.eMail);
 }
+
+int obtenerContactos(contacto *lista, int max){
+	FILE *archivo = fopen(FILENAME, "rb");
+	if(!archivo)
+		return 0;
 	
+	int cont=0;
+	while(cont < max && fread(&lista[cont], sizeof(contacto), 1, archivo) == 1){
+		cont++;
+	}
 	
+	fclose(archivo);
+	return cont;
+}
+	
+	int eliminarContactoPorNombre(const char *nombre) {
+		FILE *archivo = fopen("info.dat", "rb");
+		FILE *temp = fopen("temp.dat", "wb");
+		contacto contacto;
+		int encontrado = 0;
+		
+		if (!archivo || !temp) {
+			perror("No se pudo abrir el archivo");
+			return 0;
+		}
+		
+		while (fread(&contacto, sizeof(contacto), 1, archivo)) {
+			if (strcmp(contacto.nombre, nombre) != 0) {
+				fwrite(&contacto, sizeof(contacto), 1, temp);
+			} else {
+				encontrado = 1;
+			}
+		}
+		
+		fclose(archivo);
+		fclose(temp);
+		
+		// Reemplazar el archivo original si se encontró el contacto
+		if (encontrado) {
+			remove("info.dat");
+			rename("temp.dat", "info.dat");
+		} else {
+			remove("temp.dat");  // no se encontró, se elimina el archivo temporal
+		}
+		
+		return encontrado;
+	}
 	

@@ -2,8 +2,16 @@
 #include "contacto.h"
 #include "fileops.h"
 
+typedef struct {
+	GtkWidget *window;
+	GtkWidget *entryNombre;
+	GtkWidget *combo;
+} WidgetsEliminar;
+
 static void on_activate(GtkApplication *app, gpointer user_data);
 static void on_agregar_contacto_clicked(GtkWidget *widget, gpointer data);
+void on_eliminar_contacto_clicked(GtkButton *boton, gpointer user_data);
+void boton_eliminar_confirmar(GtkButton *btn, gpointer user_data);
 
 /*---------------------| ARRANQUE DEL ENTORNO GRAFICO |-----------------------*/
 void iniciarGTK(int argc, char *argv[]) {
@@ -22,6 +30,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 	GtkWidget *window;
 	GtkWidget *button;
 	GtkWidget *box;
+	GtkWidget *botonEliminar;
 	
 	// Crear ventana
 	window = gtk_application_window_new(app);
@@ -30,15 +39,21 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 	
 	// Crear contenedor vertical (GtkBox)
 	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+	gtk_box_set_homogeneous(GTK_BOX(box), TRUE);
 	gtk_container_add(GTK_CONTAINER(window), box);
 	
-	// Crear botón
+	// Crear boton
 	button = gtk_button_new_with_label("Agregar Contacto");
 	g_signal_connect(button, "clicked", G_CALLBACK(on_agregar_contacto_clicked), NULL);
 	
-	// Agregar botón al contenedor
+	// Agregar boton al contenedor
 	gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
+		
+	botonEliminar = gtk_button_new_with_label("Eliminar contacto");
+	g_signal_connect(botonEliminar, "clicked", G_CALLBACK(on_eliminar_contacto_clicked), NULL);
+	gtk_box_pack_start(GTK_BOX(box), botonEliminar, FALSE, FALSE, 0);
 	
+
 	// Mostrar todo
 	gtk_widget_show_all(window);
 }
@@ -116,4 +131,84 @@ static void on_agregar_contacto_clicked(GtkWidget *widget, gpointer data) {
 	
 	gtk_widget_destroy(dialog);
 }
+/*----------------------------------------------------------------------------*/
 
+/*---------------------| BOTON ELIMINAR CONTACTO |----------------------------*/
+void on_eliminar_contacto_clicked(GtkButton *boton, gpointer user_data) {
+	GtkWidget *ventanaEliminar = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(ventanaEliminar), "Eliminar contacto");
+	gtk_window_set_default_size(GTK_WINDOW(ventanaEliminar), 300, 200);
+	
+	GtkWidget *caja = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	gtk_container_add(GTK_CONTAINER(ventanaEliminar), caja);
+	
+	GtkWidget *entryNombre = gtk_entry_new();
+	gtk_entry_set_placeholder_text(GTK_ENTRY(entryNombre), "Nombre del contacto");
+	gtk_box_pack_start(GTK_BOX(caja), entryNombre, FALSE, FALSE, 0);
+	
+	GtkWidget *combo = gtk_combo_box_text_new();
+	gtk_box_pack_start(GTK_BOX(caja), combo, FALSE, FALSE, 0);
+	
+	contacto lista[200];
+	int total = obtenerContactos(lista, 200);
+	for (int i = 0; i < total; i++) {
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), lista[i].nombre);
+	}
+	
+	GtkWidget *botonEliminar = gtk_button_new_with_label("Eliminar");
+	gtk_box_pack_start(GTK_BOX(caja), botonEliminar, FALSE, FALSE, 0);
+	
+	//  Crear estructura y pasarla al callback
+	WidgetsEliminar *datos = g_malloc(sizeof(WidgetsEliminar));
+	datos->window      = ventanaEliminar;
+	datos->entryNombre = entryNombre;
+	datos->combo        = combo;
+	
+	g_signal_connect(botonEliminar,"clicked",G_CALLBACK(boton_eliminar_confirmar),datos);
+	
+	
+	gtk_widget_show_all(ventanaEliminar);
+}
+/*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+void boton_eliminar_confirmar(GtkButton *btn, gpointer user_data) {
+	WidgetsEliminar *widgets = (WidgetsEliminar *)user_data;
+	
+	const gchar *textoEntry = gtk_entry_get_text(GTK_ENTRY(widgets->entryNombre));
+	gchar *seleccion  = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(widgets->combo));
+	
+	
+	const gchar *nombreAEliminar = NULL;
+	
+	if (textoEntry && *textoEntry) {
+		nombreAEliminar = textoEntry;  // Prioriza texto manual
+	} else if (seleccion) {
+		nombreAEliminar = seleccion;
+	}
+	
+	gboolean ok = FALSE;
+	if (nombreAEliminar) {
+		g_print("Intentando borrar: [%s]\n", nombreAEliminar);
+		ok = eliminarContactoPorNombre(nombreAEliminar);
+	}
+	
+	if (nombreAEliminar) {
+		eliminarContactoPorNombre(nombreAEliminar);
+		g_print("Contacto eliminado: %s\n", nombreAEliminar);
+	}
+	
+	GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(widgets->window),
+											GTK_DIALOG_DESTROY_WITH_PARENT,
+											GTK_MESSAGE_INFO,
+											GTK_BUTTONS_OK,
+											ok ? "Contacto \"%s\" eliminado." : "No se encontró \"%s\".",
+											nombreAEliminar ? nombreAEliminar : "(ninguno)");
+	gtk_dialog_run(GTK_DIALOG(msg));
+	gtk_widget_destroy(msg);
+	
+	gtk_widget_destroy(widgets->window);
+	
+	g_free(seleccion);  // solo si se usó seleccion
+	g_free(widgets);  // liberar estructura después de uso
+}

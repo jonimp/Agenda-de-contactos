@@ -4,10 +4,13 @@
 #include "ui.h"
 #include "gtkiu.h"
 
+#define MAX 500
+
 int main(int argc, char *argv[]) {
 	iniciarGTK(argc, argv);
 	int opcion;
 	contacto persona;
+	contacto listaPersonas[MAX];
 	/*FILE *archivo = fopen("info.dat", "ab+");
 	if (!archivo) { perror("No se puede abrir info.dat"); return 1; }
 	fclose(archivo);*/

@@ -10,5 +10,7 @@ void eliminarContacto(const contacto *pers);
 void editarContacto(const contacto *pers);
 void listarContactos();
 void mostrarContacto(contacto);
+int obtenerContactos(contacto[], int);
+int eliminarContactoPorNombre(const char *nombre);
 
 #endif // FILEOPS_H
